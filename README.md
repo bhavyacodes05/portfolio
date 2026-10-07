@@ -1,12 +1,12 @@
 # Bhavya Khandelwal — Portfolio
 
-A responsive, static portfolio with a dark developer-workspace theme, lime accents, editorial typography, four project case studies, filters, and a resume chooser. No screenshots or “currently building” panel are included.
+A responsive, static portfolio with a dark developer-workspace theme, lime accents, editorial typography, four project case studies, filters, and an email-based resume request chooser. No screenshots or “currently building” panel are included.
 
 ## Open it
 
-Extract the ZIP. Double-click `index.html` inside the extracted folder. Keep the `assets` folder alongside it so resume links work. No Node.js installation or server is required.
+Open `index.html` alongside `style.css`, `app.js`, and `assets/`. No backend is required. No Node.js installation or server is required.
 
-`Bhavya-Khandelwal-Portfolio.html` is an additional standalone copy with CSS and JavaScript embedded. It can also be opened directly. Its resume links need the included `assets` folder beside it.
+The repository contains the regular source files for the public website.
 
 ## What is included
 
@@ -17,17 +17,17 @@ Extract the ZIP. Double-click `index.html` inside the extracted folder. Keep the
 - Correct email: bhavyakhandelwalmit2023@gmail.com
 - Correct IAESTE title: Chairperson
 - GitHub profile and supplied RiskLens live URL
-- Original software engineering and finance/analytics resume PDFs
+- Email links to request software engineering and finance/analytics resumes
 - Mobile navigation and reduced-motion support
 
-The PDFs are the original uploaded files. Their older email formatting and IAESTE wording have not been edited; replace them with corrected resumes before publicly publishing. The portfolio itself uses the corrected details.
+Full resume PDFs are excluded from this public repository. The portfolio uses the corrected email and Chairperson title, with email links for requesting a resume.
 
 ## Edit it
 
 - `index.html`: page content, contact details, project cards, and links
 - `style.css`: colour palette, typography, responsive layout
 - `app.js`: case-study text, filters, menus, dialogs, email copying
-- `assets/resumes/`: replace resume PDFs while keeping filenames
+- Resume links request a copy by email; no resume PDFs are stored in this repository.
 
 After changing the source files, update the standalone HTML by embedding `style.css` in a `<style>` tag and `app.js` in a `<script>` tag in place of their external references. The regular `index.html` is the source version to deploy.
 
