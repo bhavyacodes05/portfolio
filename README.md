@@ -1,6 +1,6 @@
 # Bhavya Khandelwal — Portfolio
 
-A responsive, static portfolio with a dark developer-workspace theme, lime accents, editorial typography, four project case studies, filters, and an email-based resume request chooser. No screenshots or “currently building” panel are included.
+A responsive, static portfolio with a dark developer-workspace theme, lime accents, editorial typography, four project case studies, filters, and a resume chooser. No screenshots or “currently building” panel are included.
 
 ## Open it
 
@@ -17,17 +17,17 @@ The repository contains the regular source files for the public website.
 - Correct email: bhavyakhandelwalmit2023@gmail.com
 - Correct IAESTE title: Chairperson
 - GitHub profile and supplied RiskLens live URL
-- Email links to request software engineering and finance/analytics resumes
+- Publicly downloadable software engineering and finance/analytics resume PDFs
 - Mobile navigation and reduced-motion support
 
-Full resume PDFs are excluded from this public repository. The portfolio uses the corrected email and Chairperson title, with email links for requesting a resume.
+Both full resume PDFs are published with explicit user approval. They are the original uploaded files; the portfolio uses the corrected email and Chairperson title, while the originals retain their previous wording.
 
 ## Edit it
 
 - `index.html`: page content, contact details, project cards, and links
 - `style.css`: colour palette, typography, responsive layout
 - `app.js`: case-study text, filters, menus, dialogs, email copying
-- Resume links request a copy by email; no resume PDFs are stored in this repository.
+- `assets/resumes/`: the two public resume PDFs.
 
 After changing the source files, update the standalone HTML by embedding `style.css` in a `<style>` tag and `app.js` in a `<script>` tag in place of their external references. The regular `index.html` is the source version to deploy.
 
