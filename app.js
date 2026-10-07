@@ -73,3 +73,218 @@ document.getElementById('copy-email').addEventListener('click',async()=>{
   try{if(!navigator.clipboard)throw new Error('Unavailable');await navigator.clipboard.writeText(email);status.textContent='Copied!';}catch{status.textContent='Select the email above to copy it.';}
   setTimeout(()=>status.textContent='',4500);
 });
+
+// Keep the content readable without JavaScript or with reduced motion enabled.
+const motionPreference = matchMedia('(prefers-reduced-motion: reduce)');
+const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
+const revealTargets = document.querySelectorAll('.section-heading, .experience-card, .project-card, .about-copy, .skills-panel, .leadership-grid article, .contact-panel');
+if ('IntersectionObserver' in window) {
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  revealTargets.forEach((element, index) => {
+    element.classList.add('reveal');
+    element.style.setProperty('--reveal-delay', `${index % 2 * 70}ms`);
+    revealObserver.observe(element);
+  });
+  document.body.classList.add('motion-ready');
+}
+
+const roleElement = document.getElementById('rotating-role');
+const roles = ['software & systems', 'data & patterns', 'useful automation', 'problems worth solving'];
+let roleIndex = 0, roleTimeout;
+function scheduleRole() {
+  clearTimeout(roleTimeout);
+  if (motionPreference.matches || document.hidden) return;
+  roleTimeout = setTimeout(() => {
+    roleIndex = (roleIndex + 1) % roles.length;
+    const text = roles[roleIndex];
+    let characters = 0;
+    function typeNext() {
+      if (motionPreference.matches || document.hidden) { roleElement.textContent = text; return; }
+      roleElement.textContent = text.slice(0, ++characters);
+      if (characters < text.length) roleTimeout = setTimeout(typeNext, 42);
+      else scheduleRole();
+    }
+    typeNext();
+  }, 3000);
+}
+scheduleRole();
+document.addEventListener('visibilitychange', scheduleRole);
+motionPreference.addEventListener('change', () => {
+  roleElement.textContent = roles[roleIndex];
+  scheduleRole();
+  document.querySelectorAll('.project-card').forEach(resetCard);
+  document.querySelector('.hero-note').style.setProperty('--note-x', '0px');
+  document.querySelector('.hero-note').style.setProperty('--note-y', '0px');
+});
+
+const focusAreas = {
+  software: { project: 'devdock', label: 'Developer tools. Real workflows.' },
+  data: { project: 'aura', label: 'Behavioural signals. Clearer predictions.' },
+  finance: { project: 'risklens', label: 'Market scenarios. Measurable risk.' }
+};
+document.querySelectorAll('[data-focus]').forEach(button => button.addEventListener('click', () => {
+  const focus = focusAreas[button.dataset.focus];
+  document.querySelectorAll('[data-focus]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+  document.getElementById('focus-description').textContent = focus.label;
+  const link = document.getElementById('focus-project');
+  link.dataset.project = focus.project;
+  link.setAttribute('aria-label', `Explore ${projects[focus.project].title}`);
+  const preview = document.querySelector('.focus-preview');
+  preview.classList.remove('changed');
+  requestAnimationFrame(() => preview.classList.add('changed'));
+}));
+
+function resetCard(card) {
+  card.style.setProperty('--tilt-x', '0deg');
+  card.style.setProperty('--tilt-y', '0deg');
+}
+document.querySelectorAll('.project-card').forEach(card => {
+  card.addEventListener('pointermove', event => {
+    if (motionPreference.matches || !finePointer.matches) return;
+    const rect = card.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+    card.style.setProperty('--spot-x', `${x * 100}%`);
+    card.style.setProperty('--spot-y', `${y * 100}%`);
+    card.style.setProperty('--tilt-x', `${(0.5 - y) * 4}deg`);
+    card.style.setProperty('--tilt-y', `${(x - 0.5) * 4}deg`);
+  });
+  card.addEventListener('pointerleave', () => resetCard(card));
+});
+const hero = document.querySelector('.hero');
+const heroNote = document.querySelector('.hero-note');
+hero.addEventListener('pointermove', event => {
+  if (motionPreference.matches || !finePointer.matches) return;
+  const rect = hero.getBoundingClientRect();
+  heroNote.style.setProperty('--note-x', `${((event.clientX - rect.left) / rect.width - 0.5) * 10}px`);
+  heroNote.style.setProperty('--note-y', `${((event.clientY - rect.top) / rect.height - 0.5) * 8}px`);
+});
+hero.addEventListener('pointerleave', () => {
+  heroNote.style.setProperty('--note-x', '0px');
+  heroNote.style.setProperty('--note-y', '0px');
+});
+document.querySelectorAll('[data-filter]').forEach(button => button.addEventListener('click', () => {
+  document.querySelectorAll('.project-card').forEach(card => {
+    card.classList.remove('filter-enter');
+    if (!card.hidden) {
+      card.classList.add('is-visible');
+      requestAnimationFrame(() => card.classList.add('filter-enter'));
+    }
+  });
+}));
+
+const progressBar = document.querySelector('.scroll-progress');
+const trackedSections = [...document.querySelectorAll('main section[id]')];
+let scrollPending = false;
+function updateScroll() {
+  const scrollRange = document.documentElement.scrollHeight - innerHeight;
+  progressBar.style.transform = `scaleX(${scrollRange > 0 ? Math.min(1, Math.max(0, scrollY / scrollRange)) : 0})`;
+  const current = [...trackedSections].reverse().find(section => section.getBoundingClientRect().top <= 150);
+  nav.querySelectorAll('a').forEach(link => {
+    if (current && link.hash === `#${current.id}`) link.setAttribute('aria-current', 'location');
+    else link.removeAttribute('aria-current');
+  });
+  scrollPending = false;
+}
+addEventListener('scroll', () => {
+  if (!scrollPending) { scrollPending = true; requestAnimationFrame(updateScroll); }
+}, { passive: true });
+addEventListener('resize', updateScroll);
+updateScroll();
+
+const countElement = document.querySelector('[data-count]');
+if ('IntersectionObserver' in window) {
+  const countObserver = new IntersectionObserver(entries => {
+    if (!entries[0].isIntersecting) return;
+    countObserver.disconnect();
+    if (motionPreference.matches) return;
+    const total = Number(countElement.dataset.count), started = performance.now();
+    function countFrame(now) {
+      const elapsed = Math.min((now - started) / 1200, 1);
+      countElement.textContent = Math.round(total * (1 - (1 - elapsed) ** 3));
+      if (elapsed < 1 && !motionPreference.matches) requestAnimationFrame(countFrame);
+      else countElement.textContent = total;
+    }
+    requestAnimationFrame(countFrame);
+  }, { threshold: 0.5 });
+  countObserver.observe(countElement);
+}
+
+// A searchable shortcut menu supplements the visible navigation.
+const commandDialog = document.getElementById('command-dialog');
+const commandSearch = document.getElementById('command-search');
+const commandResults = document.getElementById('command-results');
+const commands = [
+  ...Object.entries(projects).map(([key, project]) => ({ label: project.title, type: 'Project', keywords: project.tags.join(' '), run: () => document.querySelector(`[data-project="${key}"]`).click() })),
+  ...['experience', 'projects', 'about', 'contact'].map(id => ({ label: id[0].toUpperCase() + id.slice(1), type: 'Section', run: () => { document.querySelector(`nav a[href="#${id}"]`).click(); document.getElementById(id).querySelector('h2')?.focus({ preventScroll: true }); } })),
+  { label: 'View resumes', type: 'Documents', keywords: 'CV software finance', run: () => document.querySelector('[data-resumes]').click() },
+  { label: 'Copy email', type: 'Contact', keywords: 'connect', run: () => document.getElementById('copy-email').click() }
+];
+trackedSections.forEach(section => section.querySelector('h2')?.setAttribute('tabindex', '-1'));
+let visibleCommands = [], selectedCommand = 0;
+function selectCommand(index) {
+  selectedCommand = index;
+  commandResults.querySelectorAll('button').forEach((button, i) => button.classList.toggle('is-selected', i === index));
+}
+function renderCommands() {
+  const query = commandSearch.value.trim().toLowerCase();
+  visibleCommands = commands.filter(command => `${command.label} ${command.type} ${command.keywords || ''}`.toLowerCase().includes(query));
+  commandResults.replaceChildren();
+  visibleCommands.forEach((command, index) => {
+    const button = document.createElement('button');
+    button.className = 'command-option';
+    button.innerHTML = `<span>${escapeHTML(command.label)}</span><span>${escapeHTML(command.type)} ↗</span>`;
+    button.addEventListener('click', () => executeCommand(index));
+    commandResults.append(button);
+  });
+  document.getElementById('command-status').textContent = visibleCommands.length ? '' : 'No matches. Try a project name or “resume”.';
+  selectCommand(0);
+}
+function executeCommand(index) {
+  const command = visibleCommands[index];
+  if (!command) return;
+  commandDialog.close();
+  // Let close restore focus before a second dialog opens or a section receives focus.
+  requestAnimationFrame(command.run);
+}
+function showCommands() {
+  if (document.querySelector('dialog[open]')) return;
+  commandSearch.value = '';
+  renderCommands();
+  openDialog(commandDialog);
+  commandSearch.focus();
+}
+commandDialog.querySelector('.close-dialog').addEventListener('click', () => commandDialog.close());
+commandDialog.addEventListener('close', () => lastFocus?.focus());
+commandDialog.addEventListener('click', event => {
+  if (event.target !== commandDialog) return;
+  const rect = commandDialog.getBoundingClientRect();
+  if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) commandDialog.close();
+});
+document.querySelector('[data-command]').addEventListener('click', showCommands);
+commandSearch.addEventListener('input', renderCommands);
+commandDialog.addEventListener('keydown', event => {
+  if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+    event.preventDefault();
+    if (!visibleCommands.length) return;
+    selectCommand((selectedCommand + (event.key === 'ArrowDown' ? 1 : -1) + visibleCommands.length) % visibleCommands.length);
+    commandResults.children[selectedCommand]?.focus();
+  } else if (event.key === 'Enter' && event.target === commandSearch) {
+    event.preventDefault();
+    executeCommand(selectedCommand);
+  }
+});
+document.addEventListener('keydown', event => {
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
+    event.preventDefault();
+    if (commandDialog.open) commandDialog.close();
+    else showCommands();
+  }
+});

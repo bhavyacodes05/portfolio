@@ -18,6 +18,12 @@ The repository contains the regular source files for the public website.
 - Correct IAESTE title: Chairperson
 - GitHub profile and supplied RiskLens live URL
 - Publicly downloadable software engineering and finance/analytics resume PDFs
+- Animated orbital hero and rotating areas of interest
+- Interactive Software / Data & ML / Finance project navigator
+- Scroll reveals, reading progress, and active section navigation
+- Pointer-responsive project cards and animated project filtering
+- Searchable quick navigation (Ctrl+K on Windows, Cmd+K on Mac)
+- Animated annual automation-impact counter
 - Mobile navigation and reduced-motion support
 
 Both full resume PDFs are published with explicit user approval. They are the original uploaded files; the portfolio uses the corrected email and Chairperson title, while the originals retain their previous wording.
@@ -39,6 +45,7 @@ The portfolio source is maintained in `bhavyacodes05/portfolio`. GitHub Pages mu
 
 ## Validation
 
-Frontend JavaScript syntax, anchor targets, local assets, project counts, contact text, case-study data, and HTML structure were checked. Browser interaction and visual rendering could not be verified in this environment because no browser was available. Test the page in Chrome or Edge at desktop and mobile widths before publishing.
+JavaScript syntax, HTML structure, anchor targets, project data, navigation hooks, and CSS delimiters were checked. A browser test was attempted, but Chromium could not be installed because the environment blocked its download; visual rendering and native browser interactions remain unverified.
 
 Native dialogs require a modern browser. Email copying may be unavailable when the page is opened as a local file; the direct email link and selectable address still work.
+
